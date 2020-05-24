@@ -1,0 +1,31 @@
+version: "3"
+services:
+  pvm1:
+    image: pvm_img_1:latest
+    volumes:
+      - ./data:/home/pvm/data
+      - ./pvm_home:/home/pvm/pvm3/bin/LINUX64
+
+  pvm2:
+    image: pvm_img_1:latest
+    volumes:
+    - ./data:/home/pvm/data
+    - ./pvm_home:/home/pvm/pvm3/bin/LINUX64
+
+  pvm3:
+    image: pvm_img_1:latest
+    volumes:
+      - ./data:/home/pvm/data
+      - ./pvm_home:/home/pvm/pvm3/bin/LINUX64
+
+  pvm4:
+    image: pvm_img_1:latest
+    volumes:
+      - ./data:/home/pvm/data
+      - ./pvm_home:/home/pvm/pvm3/bin/LINUX64
+
+  pvm5:
+    image: pvm_img_1:latest
+    volumes:
+      - ./data:/home/pvm/data
+      - ./pvm_home:/home/pvm/pvm3/bin/LINUX64
