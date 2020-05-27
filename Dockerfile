@@ -9,6 +9,8 @@ ENV PVM_PATH /home/pvm/pvm3/bin/$PVM_ARCH
 
 RUN apt-get update && apt-get upgrade -y
 RUN apt-get install -y make nano libpvm3 pvm pvm-dev gcc vim gnuplot mc iputils-ping ssh
+RUN apt-get install -y --reinstall build-essential
+
 RUN cd /root && \
  touch start.sh && \
  chmod 777 start.sh && \
