@@ -110,6 +110,7 @@ float countPe(int e, Matrix &tau, float *Pe, int modT) {
         Pe[t] = tau(e, t) / tauSum;
     }
 
+//    cout << "FOR event: " << e << endl;
 //    displayArray(Pe, modT);
 
 }
@@ -146,15 +147,15 @@ int countCollisions(Matrix &partialSolution, Matrix &collisions) {
 //    cout << collisions;
     for (int t = 0; t < partialSolution.getCols(); t++) {
         for (int e = 0; e < partialSolution.getRows(); e++) {
-            cout << "partialSolution(" << e << "," << t << "): " << partialSolution(e, t) << endl;
+//            cout << "partialSolution(" << e << "," << t << "): " << partialSolution(e, t) << endl;
             if (partialSolution(e, t) == 0) {
                 continue;
             }
 
             for (int ee = e; ee < partialSolution.getRows(); ee++) {
 
-                cout << "collisions(" << e << "," << ee << "): " << collisions(e, ee) << endl;
-                if (collisions(e, ee) > 0) {
+//                cout << "collisions(" << e << "," << ee << "): " << collisions(e, ee) << " partialSolution(" << ee << "," << t << "): " << partialSolution(ee, t) << endl;
+                if (collisions(e, ee) > 0 && partialSolution(ee, t) > 0) {
                     numberOfCollisions++;
                 }
             }
@@ -162,7 +163,7 @@ int countCollisions(Matrix &partialSolution, Matrix &collisions) {
 
     }
 
-    cout << "num of collisions: " << numberOfCollisions << endl;
+//    cout << "num of collisions: " << numberOfCollisions << endl;
     return numberOfCollisions;
 }
 
@@ -171,23 +172,22 @@ int main() {
 
     srand(time(NULL));
 
-    float ro = 0.03;
+//    float ro = 0.3;
+    float ro = 1;
     float tauMax = 1 / ro;
     int modE = 5;
     int modT = 5;
     Matrix tau(modE, modT);
     tau.fillMatrix(tauMax);
 
-    // m
-    int antQuantity = 10;
 
     Matrix collisions(modE, modE);
 
-    collisions(0, 0) = 1;
-    collisions(2, 2) = 1;
-    collisions(1, 1) = 1;
-    collisions(3, 3) = 1;
-    collisions(4, 4) = 1;
+//    collisions(0, 0) = 1;
+//    collisions(2, 2) = 1;
+//    collisions(1, 1) = 1;
+//    collisions(3, 3) = 1;
+//    collisions(4, 4) = 1;
     collisions(0, 1) = 1;
     collisions(1, 0) = 1;
     collisions(2, 1) = 1;
@@ -198,6 +198,17 @@ int main() {
     collisions(3, 1) = 1;
     collisions(1, 4) = 1;
     collisions(4, 1) = 1;
+    collisions(0, 4) = 1;
+    collisions(4, 0) = 1;
+    collisions(3, 4) = 1;
+    collisions(4, 3) = 1;
+    collisions(0, 3) = 1;
+    collisions(3, 0) = 1;
+    collisions(0, 2) = 1;
+    collisions(2, 0) = 1;
+    collisions(2, 4) = 1;
+    collisions(4, 2) = 1;
+
 
     // Tablica przechowująca liczbę kolizji z innymi eventami dla każdego eventu
     Event d[modE];
@@ -210,8 +221,10 @@ int main() {
     Event::print(d, modE);
 
 
-    int numberOfIterations = 1;
+    int numberOfIterations = 100;
     int iterationNr = 0;
+    // m
+    int antQuantity = 1;
 
     // Cgb
     Matrix globalBestSolution(modE, modT);
@@ -255,6 +268,8 @@ int main() {
 
         }
 
+        cout << "iterationBestSolution; " << "collisions: " << countCollisions(iterationBestSolution, collisions);
+        displayMatrix(iterationBestSolution);
 
         if (countCollisions(iterationBestSolution, collisions) < countCollisions(globalBestSolution, collisions)) {
             globalBestSolution = iterationBestSolution;
@@ -262,11 +277,13 @@ int main() {
 
         tau = tau + globalBestSolution;
 
+        cout << "feromony:";
         displayMatrix(tau);
 
         iterationNr++;
     }
 
+    cout << "globalBestSolution; " << "collisions: " << countCollisions(globalBestSolution, collisions) << endl;
     displayMatrix(globalBestSolution);
 
     pvm_exit();
