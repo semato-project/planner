@@ -25,8 +25,7 @@ public:
         id = _id;
     }
 
-    bool operator <(const Event & eventObj) const
-    {
+    bool operator<(const Event &eventObj) const {
         return colissions < eventObj.colissions;
     }
 
@@ -37,7 +36,7 @@ public:
         return s.str();
     }
 
-    static void print(Event * eventObj, int size) {
+    static void print(Event *eventObj, int size) {
         for (int i = 0; i < size; ++i) {
             cout << eventObj[i].toString() << endl;
         }
@@ -45,10 +44,9 @@ public:
 
 };
 
-int compare(const void * e1, const void * e2)
-{
-    const Event * ee1 = (Event*) e1;
-    const Event * ee2 = (Event*) e2;
+int compare(const void *e1, const void *e2) {
+    const Event *ee1 = (Event *) e1;
+    const Event *ee2 = (Event *) e2;
 
     if (ee1->colissions < ee2->colissions) {
         return 1;
@@ -59,18 +57,18 @@ int compare(const void * e1, const void * e2)
     }
 }
 
-int displayMatrix(Matrix & tau) {
+int displayMatrix(Matrix &tau) {
     cout << endl;
     cout << tau;
 }
 
-void initializeAndCountCollisionsForEvent(Event * d, Matrix & collisions) {
+void initializeAndCountCollisionsForEvent(Event *d, Matrix &collisions) {
 
     for (int i = 0; i < collisions.getRows(); ++i) {
         d[i].id = i;
         d[i].colissions = 0;
         for (int j = 0; j < collisions.getCols(); ++j) {
-            if (collisions(i,j) == 1) {
+            if (collisions(i, j) == 1) {
                 d[i].colissions++;
             }
         }
@@ -79,7 +77,7 @@ void initializeAndCountCollisionsForEvent(Event * d, Matrix & collisions) {
 
 }
 
-void displayArray(int * arr, int arrSize) {
+void displayArray(int *arr, int arrSize) {
     for (int i = 0; i < arrSize; ++i) {
         cout << i << ": " << arr[i] << "; " << endl;
     }
@@ -93,27 +91,32 @@ void displayArray(int * arr, int arrSize) {
 //}
 
 
-int main()
-{
+
+
+int main() {
     float ro = 0.3;
     float tauMax = 1 / ro;
     int modE = 5;
     int modT = 10;
     Matrix tau(modE, modT);
+    tau.fillMatrix(tauMax);
+
+    // m
+    int antQuantity = 10;
 
     Matrix collisions(modE, modE);
 
-    collisions(0,0) = 1;
-    collisions(2,2) = 1;
-    collisions(1,1) = 1;
-    collisions(3,3) = 1;
-    collisions(4,4) = 1;
-    collisions(0,1) = 1;
-    collisions(1,0) = 1;
-    collisions(2,1) = 1;
-    collisions(1,2) = 1;
-    collisions(3,2) = 1;
-    collisions(2,3) = 1;
+    collisions(0, 0) = 1;
+    collisions(2, 2) = 1;
+    collisions(1, 1) = 1;
+    collisions(3, 3) = 1;
+    collisions(4, 4) = 1;
+    collisions(0, 1) = 1;
+    collisions(1, 0) = 1;
+    collisions(2, 1) = 1;
+    collisions(1, 2) = 1;
+    collisions(3, 2) = 1;
+    collisions(2, 3) = 1;
 
     // Tablica przechowująca liczbę kolizji z innymi eventami dla każdego eventu
     Event d[modE];
@@ -125,71 +128,55 @@ int main()
 //    displayArray(d, modE);
     Event::print(d, modE);
 
-    // m
-    int antQuantity = 10;
 
     int numberOfIterations = 1;
     int iterationNr = 0;
 
-    while(iterationNr < numberOfIterations) {
+    // Cgb
+    Matrix globalBestSolution(modE, modT);
 
-        // A
-        Matrix partialSolutions[modE];
+    while (iterationNr < numberOfIterations) {
 
+        // Cib
+        Matrix iterationBestSolution(modE, modT);
 
         for (int a = 1; a <= antQuantity; a++) {
-            partialSolutions[0].fillMatrix(0);
 
-            for (int i = 1; i <= modE; i++) {
+            // A
+            Matrix partialSolution(modE, modT);
+            partialSolution.fillMatrix(0);
+
+            for (int e = 0; e < modE; e++) {
+
+                float Pe[modT];
+
+                // Wypełnia tablicę prawdopodobieństw Pe
+                countPe(e, tau, Pe);
+
+                // Zwraca wylosowany identyfikator timeslotu w oparciu o tablice prawdopodobieństw Pe
+                int t = countT(Pe);
+                partialSolution(e, t) = 1;
+
+                // 0: 23.5654%; 1: 30%;
+                // rand(0,1): (0;0.5) -> 0 ; (0.5;0.8) -> 1     ; (0.8;1) -> 2
 
             }
 
-
+            if (countCollisions(partialSolution, collisions) < countCollisions(iterationBestSolution, collisions)) {
+                iterationBestSolution = partialSolution;
+            }
 
         }
 
-
-
-
-
-
+        if (countCollisions(iterationBestSolution, collisions) < countCollisions(globalBestSolution, collisions)) {
+            globalBestSolution = iterationBestSolution;
+        }
 
         iterationNr++;
     }
 
-
-
-//    int dSorted[modE];
-
-//    sortArray(d, dSorted);
-
-
-
-
-//    displayMatrix(collisions);
-
-
-
-
-
-//    tau.fillMatrix(tauMax);
-
-
-
-
-
-
-
-//    displayMatrix(tau);
-
-
-
-
-
-
-
-        pvm_exit();
-        return 0;
+    pvm_exit();
+    return 0;
 }
 
 
