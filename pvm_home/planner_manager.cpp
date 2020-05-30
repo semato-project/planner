@@ -5,6 +5,7 @@
 #include "matrix.h"
 #include <string>
 #include <sstream>
+#include <cstdlib>
 
 using namespace std;
 
@@ -84,6 +85,13 @@ void displayArray(int *arr, int arrSize) {
 }
 
 
+void displayArray(float *arr, int arrSize) {
+    for (int i = 0; i < arrSize; ++i) {
+        cout << i << ": " << arr[i] << "; " << endl;
+    }
+}
+
+
 //void displayEvents(Event * eventObj, int size) {
 //    for (int i = 0; i < arrSize; ++i) {
 //        cout << eventObj[i]->toString() << endl;
@@ -91,13 +99,82 @@ void displayArray(int *arr, int arrSize) {
 //}
 
 
+float countPe(int e, Matrix &tau, float *Pe, int modT) {
+
+    float tauSum = 0;
+    for (int t = 0; t < modT; t++) {
+        tauSum += tau(e, t);
+    }
+
+    for (int t = 0; t < modT; t++) {
+        Pe[t] = tau(e, t) / tauSum;
+    }
+
+//    displayArray(Pe, modT);
+
+}
+
+int countT(float *propabilisticsEvent, int modT) {
+
+    double random = ((double) rand() / RAND_MAX);
+    double border = 0;
+    for (int i = 0; i < modT; i++) {
+        border += propabilisticsEvent[i];
+        if (random <= border) {
+//            cout << random << " return: " << i << endl;
+            return i;
+        }
+    }
+
+    throw "countT nie zadziałał bo nie policzył które t";
+}
+
+
+int countCollisions(Matrix &partialSolution, Matrix &collisions) {
+
+    // --- INITIALIZATION---
+    int numberOfCollisions = 0;
+    // # kolizja - dwa takie same eventy są w tym samym slocie czasowym
+    // # kolizja - event odbywa się równocześnie z innym eventem
+
+//    // --- SHOW PARTIAL MATRIX ---
+//    cout << "partial" << endl;
+//    cout << partialSolution;
+//
+//    // --- SHOW COLLISION MATRIX ---
+//    cout << "collisions" << endl;
+//    cout << collisions;
+    for (int t = 0; t < partialSolution.getCols(); t++) {
+        for (int e = 0; e < partialSolution.getRows(); e++) {
+            cout << "partialSolution(" << e << "," << t << "): " << partialSolution(e, t) << endl;
+            if (partialSolution(e, t) == 0) {
+                continue;
+            }
+
+            for (int ee = e; ee < partialSolution.getRows(); ee++) {
+
+                cout << "collisions(" << e << "," << ee << "): " << collisions(e, ee) << endl;
+                if (collisions(e, ee) > 0) {
+                    numberOfCollisions++;
+                }
+            }
+        }
+
+    }
+
+    cout << "num of collisions: " << numberOfCollisions << endl;
+    return numberOfCollisions;
+}
 
 
 int main() {
-    float ro = 0.3;
+
+    srand(time(NULL));
+
+    float ro = 0.03;
     float tauMax = 1 / ro;
     int modE = 5;
-    int modT = 10;
+    int modT = 5;
     Matrix tau(modE, modT);
     tau.fillMatrix(tauMax);
 
@@ -117,6 +194,10 @@ int main() {
     collisions(1, 2) = 1;
     collisions(3, 2) = 1;
     collisions(2, 3) = 1;
+    collisions(1, 3) = 1;
+    collisions(3, 1) = 1;
+    collisions(1, 4) = 1;
+    collisions(4, 1) = 1;
 
     // Tablica przechowująca liczbę kolizji z innymi eventami dla każdego eventu
     Event d[modE];
@@ -134,11 +215,13 @@ int main() {
 
     // Cgb
     Matrix globalBestSolution(modE, modT);
+    globalBestSolution.fillMatrix(1);
 
     while (iterationNr < numberOfIterations) {
 
         // Cib
         Matrix iterationBestSolution(modE, modT);
+        iterationBestSolution.fillMatrix(1);
 
         for (int a = 1; a <= antQuantity; a++) {
 
@@ -151,11 +234,13 @@ int main() {
                 float Pe[modT];
 
                 // Wypełnia tablicę prawdopodobieństw Pe
-                countPe(e, tau, Pe);
+                countPe(e, tau, Pe, modT);
 
                 // Zwraca wylosowany identyfikator timeslotu w oparciu o tablice prawdopodobieństw Pe
-                int t = countT(Pe);
+                int t = countT(Pe, modT);
                 partialSolution(e, t) = 1;
+
+//                displayMatrix(partialSolution);
 
                 // 0: 23.5654%; 1: 30%;
                 // rand(0,1): (0;0.5) -> 0 ; (0.5;0.8) -> 1     ; (0.8;1) -> 2
@@ -163,17 +248,26 @@ int main() {
             }
 
             if (countCollisions(partialSolution, collisions) < countCollisions(iterationBestSolution, collisions)) {
+//                displayMatrix(partialSolution);
                 iterationBestSolution = partialSolution;
+//                displayMatrix(iterationBestSolution);
             }
 
         }
+
 
         if (countCollisions(iterationBestSolution, collisions) < countCollisions(globalBestSolution, collisions)) {
             globalBestSolution = iterationBestSolution;
         }
 
+        tau = tau + globalBestSolution;
+
+        displayMatrix(tau);
+
         iterationNr++;
     }
+
+    displayMatrix(globalBestSolution);
 
     pvm_exit();
     return 0;
