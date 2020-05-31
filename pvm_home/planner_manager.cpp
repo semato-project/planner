@@ -172,22 +172,23 @@ int main() {
 
     srand(time(NULL));
 
-//    float ro = 0.3;
-    float ro = 1;
-    float tauMax = 1 / ro;
+    float rho = 0.3;
+    float tauMax = 1 / rho;
+    int numberOfIterations = 100;
+    // m
+    int antQuantity = 1;
+
+
     int modE = 5;
     int modT = 5;
+
+
     Matrix tau(modE, modT);
     tau.fillMatrix(tauMax);
 
 
     Matrix collisions(modE, modE);
 
-//    collisions(0, 0) = 1;
-//    collisions(2, 2) = 1;
-//    collisions(1, 1) = 1;
-//    collisions(3, 3) = 1;
-//    collisions(4, 4) = 1;
     collisions(0, 1) = 1;
     collisions(1, 0) = 1;
     collisions(2, 1) = 1;
@@ -217,14 +218,9 @@ int main() {
 
     qsort(d, modE, sizeof(*d), compare);
 
-//    displayArray(d, modE);
     Event::print(d, modE);
 
-
-    int numberOfIterations = 100;
     int iterationNr = 0;
-    // m
-    int antQuantity = 1;
 
     // Cgb
     Matrix globalBestSolution(modE, modT);
@@ -253,17 +249,10 @@ int main() {
                 int t = countT(Pe, modT);
                 partialSolution(e, t) = 1;
 
-//                displayMatrix(partialSolution);
-
-                // 0: 23.5654%; 1: 30%;
-                // rand(0,1): (0;0.5) -> 0 ; (0.5;0.8) -> 1     ; (0.8;1) -> 2
-
             }
 
             if (countCollisions(partialSolution, collisions) < countCollisions(iterationBestSolution, collisions)) {
-//                displayMatrix(partialSolution);
                 iterationBestSolution = partialSolution;
-//                displayMatrix(iterationBestSolution);
             }
 
         }
