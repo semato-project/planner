@@ -118,7 +118,7 @@ int countT(float *propabilisticsEvent, int modT) {
         }
     }
 
-    throw "countT nie zadziałał bo nie policzył które t";
+    throw 9;
 }
 
 
@@ -172,25 +172,37 @@ void initializeConstants(ifstream &inputDataFile, float &rho, int &numberOfItera
     getline(inputDataFile, line);
     rho = stof(line);
 
+    cout << "rho: " << rho << endl;
+
     getline(inputDataFile, line);
     getline(inputDataFile, line);
     numberOfIterations = stoi(line);
+
+    cout << "numberOfIterations: " << numberOfIterations << endl;
 
     getline(inputDataFile, line);
     getline(inputDataFile, line);
     singleSlaveIterationSeconds = stoi(line);
 
+    cout << "singleSlaveIterationSeconds: " << singleSlaveIterationSeconds << endl;
+
     getline(inputDataFile, line);
     getline(inputDataFile, line);
     antQuantity = stoi(line);
+
+    cout << "antQuantity: " << antQuantity << endl;
 
     getline(inputDataFile, line);
     getline(inputDataFile, line);
     modE = stoi(line);
 
+    cout << "modE: " << modE << endl;
+
     getline(inputDataFile, line);
     getline(inputDataFile, line);
     modT = stoi(line);
+
+    cout << "modT: " << modT << endl;
 
 }
 
@@ -233,12 +245,16 @@ int main() {
     int numberOfIterations, antQuantity, modE, modT, singleSlaveIterationSeconds;
 
     ifstream inputDataFile;
-    string inputFilePath = "/input.data";
-    inputFilePath = getenv("PVM_PATH") + inputFilePath;
+    string inputFilePath = "/home/pvm/data/input.txt";
+//    inputFilePath = getenv("PVM_PATH") + inputFilePath;
     inputDataFile.open(inputFilePath);
 
+    inputDataFile.clear(); //clear the failure flag
+    inputDataFile.seekg (0, ios::beg);
+
+
     if (!inputDataFile.is_open()) {
-        throw "input.data file can not be read.";
+        throw "input.txt file can not be read.";
     }
 
     initializeConstants(inputDataFile, rho, numberOfIterations, singleSlaveIterationSeconds, antQuantity, modE, modT);
@@ -251,9 +267,7 @@ int main() {
 
     inputDataFile.close();
 
-    // displayMatrix(collisions);
- 
-
+    displayMatrix(collisions);
 
     Matrix tau(modE, modT);
     tau.fillMatrix(tauMax);
@@ -275,8 +289,6 @@ int main() {
     // // do przekazania: tau, antQuantity, collisions, modE, modT
     int tids[5]; // identyfikatory zadań slave
     int proc = pvm_spawn((char*) "planner_worker", NULL, PvmTaskDefault, (char*) "", 5, tids);
-    cout << "DUPA!";
-
 
     for(int i=0; i<proc; i++ ){
         pvm_initsend(PvmDataDefault); // tworzenie buffora
@@ -301,7 +313,7 @@ int main() {
         }
     }
 
-    cout << masterBestSolution << endl;
+    cout << "Best Solution: (" << countCollisions(masterBestSolution, collisions) << " collisions) " << endl << masterBestSolution << endl;
     pvm_exit();
     return 0;
 }

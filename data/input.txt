@@ -1,7 +1,7 @@
 # Rho factor:
 0.3
 # Number of iterations:
-100
+1000000
 # Time of single slave iteration [s]
 10
 # Ant quantity:
@@ -16,7 +16,6 @@
 2
 3
 4
-# Group 2 event ids:
 5
 6
 7
@@ -28,7 +27,6 @@
 12
 13
 14
-# Group 4 event ids:
 15
 16
 17

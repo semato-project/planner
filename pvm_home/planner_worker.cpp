@@ -73,17 +73,21 @@ float countPe(int e, Matrix &tau, float *Pe, int modT) {
 
 int countT(float *propabilisticsEvent, int modT) {
 
-    double random = ((double) rand() / RAND_MAX);
-    double border = 0;
+    float random = 1.0;
+    while (random >= 1.0 || random >= 1) {
+        random = (rand() / RAND_MAX);
+    }
+
+    float border = 0;
     for (int i = 0; i < modT; i++) {
         border += propabilisticsEvent[i];
-        if (random <= border) {
-//            cout << random << " return: " << i << endl;
+        if (random < border || random == border) {
             return i;
         }
     }
 
-    throw "countT nie zadziałał bo nie policzył które t";
+    cout << "random: " << random << " border: " << border << " modT: " << modT << endl;
+    throw 0.1;
 }
 
 void unpackMatrix(int cols, int rows, Matrix &matrix) {
