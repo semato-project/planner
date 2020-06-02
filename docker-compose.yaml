@@ -1,31 +1,51 @@
 version: "3"
 services:
   pvm1:
+    deploy:
+      resources:
+        limit:
+          cpus: 0.5
     image: pvm_img_1:latest
     volumes:
       - ./data:/home/pvm/data
       - ./pvm_home:/home/pvm/pvm3/bin/LINUX64
 
   pvm2:
+    deploy:
+      resources:
+        limit:
+          cpus: 0.5
     image: pvm_img_1:latest
     volumes:
     - ./data:/home/pvm/data
     - ./pvm_home:/home/pvm/pvm3/bin/LINUX64
 
   pvm3:
+    deploy:
+      resources:
+        limit:
+          cpus: 0.5
     image: pvm_img_1:latest
     volumes:
       - ./data:/home/pvm/data
       - ./pvm_home:/home/pvm/pvm3/bin/LINUX64
 
   pvm4:
+    deploy:
+      resources:
+        limit:
+          cpus: 0.5
     image: pvm_img_1:latest
     volumes:
       - ./data:/home/pvm/data
       - ./pvm_home:/home/pvm/pvm3/bin/LINUX64
 
-  pvm5:
-    image: pvm_img_1:latest
-    volumes:
-      - ./data:/home/pvm/data
-      - ./pvm_home:/home/pvm/pvm3/bin/LINUX64
+#  pvm5:
+#    deploy:
+#      resources:
+#        limit:
+#          cpus: 0.5
+#    image: pvm_img_1:latest
+#    volumes:
+#      - ./data:/home/pvm/data
+#      - ./pvm_home:/home/pvm/pvm3/bin/LINUX64

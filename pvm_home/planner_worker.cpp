@@ -145,7 +145,7 @@ int main(){
             globalBestSolution = iterationBestSolution;
         }
 
-        tau = tau + rho * globalBestSolution;
+        tau = (1 - rho) * tau + antQuantity * globalBestSolution;
 
     }
 
