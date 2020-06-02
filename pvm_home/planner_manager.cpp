@@ -244,6 +244,8 @@ int main() {
     float rho, tauMax;
     int numberOfIterations, antQuantity, modE, modT, singleSlaveIterationSeconds;
 
+    time_t start = time(nullptr);
+
     ifstream inputDataFile;
     string inputFilePath = "/home/pvm/data/input.txt";
 //    inputFilePath = getenv("PVM_PATH") + inputFilePath;
@@ -290,11 +292,13 @@ int main() {
     int tids[5]; // identyfikatory zadań slave
     int proc = pvm_spawn((char*) "planner_worker", NULL, PvmTaskDefault, (char*) "", 5, tids);
 
+
+
     for(int i=0; i<proc; i++ ){
         pvm_initsend(PvmDataDefault); // tworzenie buffora
         pvm_pkint(&modE, 1, 1); // wsadzenie inta do buffora
         pvm_pkint(&modT, 1, 1); // wsadzenie inta do buffora
-        pvm_pkint(&antQuantity, 1, 1); 
+        pvm_pkint(&antQuantity, 1, 1);
         pvm_pkint(&numberOfIterations, 1, 1);
         packMatrix(modE, modE, collisions);
         packMatrix(modE, modT, tau);
@@ -305,16 +309,29 @@ int main() {
     masterBestSolution.fillMatrix(1);
 
     for(int i=0; i<proc; i++ ){
-        pvm_recv( -1, 2);
+        pvm_recv(-1, 2);
         Matrix result(modE, modT);
         unpackMatrix(modE, modT, result);
+        unpackMatrix(modE, modT, tau);
+
+//        int currentWorkerTid;
+//        pvm_upkint(&currentWorkerTid, 1, 1);
         if (countCollisions(result, collisions) < countCollisions(masterBestSolution, collisions)) {
             masterBestSolution = result;
         }
+
+        if (countCollisions(masterBestSolution, collisions) <= 0) {
+            break;
+        }
     }
 
-    cout << "Best Solution: (" << countCollisions(masterBestSolution, collisions) << " collisions) " << endl << masterBestSolution << endl;
+
+
+
+    cout << "Master Best Solution (Total): (" << countCollisions(masterBestSolution, collisions) << " collisions) " << endl << masterBestSolution
+        << endl <<  "Duration: " << (time(nullptr) - start) << endl;
     pvm_exit();
+    pvm_halt();
     return 0;
 }
 

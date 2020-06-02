@@ -1,4 +1,4 @@
-#include "planner.h"
+    #include "planner.h"
 
 using namespace std;
 
@@ -87,6 +87,8 @@ int countT(float *propabilisticsEvent, int modT) {
     }
 
     cout << "random: " << random << " border: " << border << " modT: " << modT << endl;
+    return countT(propabilisticsEvent, modT);
+
     throw 0.1;
 }
 
@@ -181,11 +183,16 @@ int main(){
     cout << "feromony:";
     displayMatrix(tau);
 
-    cout << "globalBestSolution; " << "collisions: " << countCollisions(globalBestSolution, collisions) << endl;
+    cout << "Worker Best Solution; " << "collisions: " << countCollisions(globalBestSolution, collisions) << endl;
     displayMatrix(globalBestSolution);
 
     pvm_initsend(PvmDataDefault); // tworzenie buffora
     packMatrix(modE, modT, globalBestSolution);
+    packMatrix(modE, modT, tau);
+
+//    int mytid = pvm_mytid();
+//    pvm_pkint(&mytid, 1, 1);
     pvm_send(pvm_parent(), 2); // wyslanie messega
+
 	pvm_exit();
 }
