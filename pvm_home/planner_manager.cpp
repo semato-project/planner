@@ -2,67 +2,66 @@
 
 using namespace std;
 
-class Event {
-public:
-    int id;
-    int colissions;
-    int timeSlot;
+//class Event {
+//public:
+//    int id;
+//    int colissions;
+//    int timeSlot;
+//
+//    Event() {
+//
+//    }
+//
+//    Event(int _id) {
+//        id = _id;
+//    }
+//
+//    bool operator<(const Event &eventObj) const {
+//        return colissions < eventObj.colissions;
+//    }
+//
+//
+//    string toString() {
+//        stringstream s;
+//        s << "id:" << id << "; colissions:" << colissions;
+//        return s.str();
+//    }
+//
+//    static void print(Event *eventObj, int size) {
+//        for (int i = 0; i < size; ++i) {
+//            cout << eventObj[i].toString() << endl;
+//        }
+//    }
+//
+//};
 
-    Event() {
+//int compare(const void *e1, const void *e2) {
+//    const Event *ee1 = (Event *) e1;
+//    const Event *ee2 = (Event *) e2;
+//
+//    if (ee1->colissions < ee2->colissions) {
+//        return 1;
+//    } else if (ee1->colissions > ee2->colissions) {
+//        return -1;
+//    } else {
+//        return 0;
+//    }
+//}
 
-    }
-
-    Event(int _id) {
-        id = _id;
-    }
-
-    bool operator<(const Event &eventObj) const {
-        return colissions < eventObj.colissions;
-    }
-
-
-    string toString() {
-        stringstream s;
-        s << "id:" << id << "; colissions:" << colissions;
-        return s.str();
-    }
-
-    static void print(Event *eventObj, int size) {
-        for (int i = 0; i < size; ++i) {
-            cout << eventObj[i].toString() << endl;
-        }
-    }
-
-};
-
-int compare(const void *e1, const void *e2) {
-    const Event *ee1 = (Event *) e1;
-    const Event *ee2 = (Event *) e2;
-
-    if (ee1->colissions < ee2->colissions) {
-        return 1;
-    } else if (ee1->colissions > ee2->colissions) {
-        return -1;
-    } else {
-        return 0;
-    }
-}
-
-
-void initializeAndCountCollisionsForEvent(Event *d, Matrix &collisions) {
-
-    for (int i = 0; i < collisions.getRows(); ++i) {
-        d[i].id = i;
-        d[i].colissions = 0;
-        for (int j = 0; j < collisions.getCols(); ++j) {
-            if (collisions(i, j) == 1) {
-                d[i].colissions++;
-            }
-        }
-
-    }
-
-}
+//void initializeAndCountCollisionsForEvent(Event *d, Matrix &collisions) {
+//
+//    for (int i = 0; i < collisions.getRows(); ++i) {
+//        d[i].id = i;
+//        d[i].colissions = 0;
+//        for (int j = 0; j < collisions.getCols(); ++j) {
+//            if (collisions(i, j) == 1) {
+//                d[i].colissions++;
+//            }
+//        }
+//
+//    }
+//
+//}
 
 int displayMatrix(Matrix &tau) {
     cout << endl;
@@ -82,14 +81,6 @@ void displayArray(float *arr, int arrSize) {
     }
 }
 
-
-//void displayEvents(Event * eventObj, int size) {
-//    for (int i = 0; i < arrSize; ++i) {
-//        cout << eventObj[i]->toString() << endl;
-//    }
-//}
-
-
 float countPe(int e, Matrix &tau, float *Pe, int modT) {
 
     float tauSum = 0;
@@ -100,27 +91,7 @@ float countPe(int e, Matrix &tau, float *Pe, int modT) {
     for (int t = 0; t < modT; t++) {
         Pe[t] = tau(e, t) / tauSum;
     }
-
-//    cout << "FOR event: " << e << endl;
-//    displayArray(Pe, modT);
-
 }
-
-//int countT(float *propabilisticsEvent, int modT) {
-//
-//    double random = ((double) rand() / RAND_MAX);
-//    double border = 0;
-//    for (int i = 0; i < modT; i++) {
-//        border += propabilisticsEvent[i];
-//        if (random <= border) {
-////            cout << random << " return: " << i << endl;
-//            return i;
-//        }
-//    }
-//
-//    throw 9;
-//}
-
 
 int countCollisions(Matrix &partialSolution, Matrix &collisions) {
 
@@ -129,14 +100,12 @@ int countCollisions(Matrix &partialSolution, Matrix &collisions) {
 
     for (int t = 0; t < partialSolution.getCols(); t++) {
         for (int e = 0; e < partialSolution.getRows(); e++) {
-//            cout << "partialSolution(" << e << "," << t << "): " << partialSolution(e, t) << endl;
             if (partialSolution(e, t) == 0) {
                 continue;
             }
 
             for (int ee = e; ee < partialSolution.getRows(); ee++) {
 
-//                cout << "collisions(" << e << "," << ee << "): " << collisions(e, ee) << " partialSolution(" << ee << "," << t << "): " << partialSolution(ee, t) << endl;
                 if (collisions(e, ee) > 0 && partialSolution(ee, t) > 0) {
                     numberOfCollisions++;
                 }
@@ -145,7 +114,6 @@ int countCollisions(Matrix &partialSolution, Matrix &collisions) {
 
     }
 
-//    cout << "num of collisions: " << numberOfCollisions << endl;
     return numberOfCollisions;
 }
 
@@ -165,12 +133,12 @@ void packMatrix(int cols, int rows, Matrix &matrix) {
     }
 }
 
-void initializeConstants(ifstream &inputDataFile, float &rho, int &numberOfIterations, int &singleSlaveIterationSeconds, int &antQuantity, int &modE, int &modT) {
+void initializeConstants(ifstream &inputDataFile, double &rho, int &numberOfIterations, int &singleSlaveIterationSeconds, int &antQuantity, int &modE, int &modT) {
 
     string line;
     getline(inputDataFile, line);
     getline(inputDataFile, line);
-    rho = stof(line);
+    rho = stod(line);
 
     cout << "rho: " << rho << endl;
 
@@ -241,14 +209,14 @@ void initializeCollisions(ifstream &inputDataFile, Matrix &collisions, int modE)
 
 
 int main() {
-    float rho, tauMax;
+    float tauMax;
+    double rho;
     int numberOfIterations, antQuantity, modE, modT, singleSlaveIterationSeconds;
 
     time_t start = time(nullptr);
 
     ifstream inputDataFile;
     string inputFilePath = "/home/pvm/data/input.txt";
-//    inputFilePath = getenv("PVM_PATH") + inputFilePath;
     inputDataFile.open(inputFilePath);
 
     inputDataFile.clear(); //clear the failure flag
@@ -274,65 +242,58 @@ int main() {
     Matrix tau(modE, modT);
     tau.fillMatrix(tauMax);
 
-    // displayMatrix(tau);
-    // return 0;
-
-    // // Tablica przechowująca liczbę kolizji z innymi eventami dla każdego eventu
-    // // Event d[modE];
-
-    // // initializeAndCountCollisionsForEvent(d, collisions);
-
-    // // qsort(d, modE, sizeof(*d), compare);
-
-    // // Event::print(d, modE);
-
-    // // int iterationNr = 0;
-
-    // // do przekazania: tau, antQuantity, collisions, modE, modT
-    int tids[5]; // identyfikatory zadań slave
-    int proc = pvm_spawn((char*) "planner_worker", NULL, PvmTaskDefault, (char*) "", 5, tids);
-
-
-
-    for(int i=0; i<proc; i++ ){
-        pvm_initsend(PvmDataDefault); // tworzenie buffora
-        pvm_pkint(&modE, 1, 1); // wsadzenie inta do buffora
-        pvm_pkint(&modT, 1, 1); // wsadzenie inta do buffora
-        pvm_pkint(&antQuantity, 1, 1);
-        pvm_pkint(&numberOfIterations, 1, 1);
-        packMatrix(modE, modE, collisions);
-        packMatrix(modE, modT, tau);
-        pvm_send(tids[i], 1); // wyslanie messega
-    }
-
     Matrix masterBestSolution(modE, modT);
     masterBestSolution.fillMatrix(1);
 
-    for(int i=0; i<proc; i++ ){
-        pvm_recv(-1, 2);
-        Matrix result(modE, modT);
-        unpackMatrix(modE, modT, result);
-        unpackMatrix(modE, modT, tau);
+    bool optimalSolutionFound = false;
 
-//        int currentWorkerTid;
-//        pvm_upkint(&currentWorkerTid, 1, 1);
-        if (countCollisions(result, collisions) < countCollisions(masterBestSolution, collisions)) {
-            masterBestSolution = result;
+    int iterationPerformed = 1;
+
+    for (int ii = 0; ii < numberOfIterations; ii++) {
+
+        cout << "Current duration: " << (time(nullptr) - start) << "[s]" << endl;
+
+        int tids[5]; // identyfikatory zadań slave
+        int proc = pvm_spawn((char *) "planner_worker", NULL, PvmTaskDefault, (char *) "", 5, tids);
+
+        for (int i = 0; i < proc; i++) {
+            pvm_initsend(PvmDataDefault); // tworzenie buffora
+            pvm_pkint(&modE, 1, 1); // wsadzenie inta do buffora
+            pvm_pkint(&modT, 1, 1); // wsadzenie inta do buffora
+            pvm_pkint(&antQuantity, 1, 1);
+            pvm_pkdouble(&rho, 1, 1);
+            pvm_pkint(&singleSlaveIterationSeconds, 1, 1);
+            packMatrix(modE, modE, collisions);
+            packMatrix(modE, modT, tau);
+            pvm_send(tids[i], 1); // wyslanie messega
         }
 
-        if (countCollisions(masterBestSolution, collisions) <= 0) {
+        for (int i = 0; i < proc; i++) {
+            pvm_recv(-1, 2);
+            Matrix result(modE, modT);
+            unpackMatrix(modE, modT, result);
+            unpackMatrix(modE, modT, tau);
+
+            if (countCollisions(result, collisions) < countCollisions(masterBestSolution, collisions)) {
+                masterBestSolution = result;
+            }
+
+            if (countCollisions(masterBestSolution, collisions) <= 0) {
+                optimalSolutionFound = true;
+                break;
+            }
+        }
+
+        if (optimalSolutionFound) {
             break;
         }
+
+        iterationPerformed++;
     }
 
-
-
-
     cout << "Master Best Solution (Total): (" << countCollisions(masterBestSolution, collisions) << " collisions) " << endl << masterBestSolution
-        << endl <<  "Duration: " << (time(nullptr) - start) << endl;
+        << endl << "Final feromones matrix: " << endl << tau << endl <<  "Total Duration: " << (time(nullptr) - start)
+        << endl << "After iterations: " << iterationPerformed << endl << "Number of collisions: " << countCollisions(masterBestSolution, collisions) << endl;
     pvm_exit();
-    pvm_halt();
     return 0;
 }
-
-

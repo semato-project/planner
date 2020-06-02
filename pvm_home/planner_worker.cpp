@@ -25,7 +25,6 @@ int countCollisions(Matrix &partialSolution, Matrix &collisions) {
 
     }
 
-//    cout << "num of collisions: " << numberOfCollisions << endl;
     return numberOfCollisions;
 }
 
@@ -33,27 +32,6 @@ int displayMatrix(Matrix &tau) {
     cout << endl;
     cout << tau;
 }
-
-void displayArray(int *arr, int arrSize) {
-    for (int i = 0; i < arrSize; ++i) {
-        cout << i << ": " << arr[i] << "; " << endl;
-    }
-}
-
-
-void displayArray(float *arr, int arrSize) {
-    for (int i = 0; i < arrSize; ++i) {
-        cout << i << ": " << arr[i] << "; " << endl;
-    }
-}
-
-
-//void displayEvents(Event * eventObj, int size) {
-//    for (int i = 0; i < arrSize; ++i) {
-//        cout << eventObj[i]->toString() << endl;
-//    }
-//}
-
 
 float countPe(int e, Matrix &tau, float *Pe, int modT) {
 
@@ -65,9 +43,6 @@ float countPe(int e, Matrix &tau, float *Pe, int modT) {
     for (int t = 0; t < modT; t++) {
         Pe[t] = tau(e, t) / tauSum;
     }
-
-//    cout << "FOR event: " << e << endl;
-//    displayArray(Pe, modT);
 
 }
 
@@ -86,10 +61,9 @@ int countT(float *propabilisticsEvent, int modT) {
         }
     }
 
-    cout << "random: " << random << " border: " << border << " modT: " << modT << endl;
+    cout << "countT failed: " << "random: " << random << " border: " << border << " modT: " << modT << endl;
     return countT(propabilisticsEvent, modT);
 
-    throw 0.1;
 }
 
 void unpackMatrix(int cols, int rows, Matrix &matrix) {
@@ -111,7 +85,8 @@ void packMatrix(int cols, int rows, Matrix &matrix) {
 int main(){
     srand(time(NULL));
 
-    int modE, modT, antQuantity, numberOfIterations;
+    int modE, modT, antQuantity, singleSlaveIterationSeconds;
+    double rho;
     int i = pvm_recv( -1, 1);
     if ( i < 0 )
     {
@@ -121,20 +96,21 @@ int main(){
     pvm_upkint( &modE, 1, 1);
     pvm_upkint( &modT, 1, 1);
     pvm_upkint( &antQuantity, 1, 1);
-    pvm_upkint(  &numberOfIterations, 1, 1);
+    pvm_upkdouble( &rho, 1, 1);
+    pvm_upkint(&singleSlaveIterationSeconds, 1, 1);
     Matrix collisions(modE, modE);
     unpackMatrix(modE, modE, collisions);
 
     Matrix tau(modE, modT);
     unpackMatrix(modE, modT, tau);
 
-    int iterationNr = 0;
-
     //  Cgb
     Matrix globalBestSolution(modE, modT);
     globalBestSolution.fillMatrix(1);
 
-    while (iterationNr < numberOfIterations) {
+    time_t start = time(nullptr);
+
+    while (time(nullptr) - start < singleSlaveIterationSeconds) {
 
         // Cib
         Matrix iterationBestSolution(modE, modT);
@@ -165,33 +141,18 @@ int main(){
 
         }
 
-        // cout << "iterationBestSolution; " << "collisions: " << countCollisions(iterationBestSolution, collisions);
-        // displayMatrix(iterationBestSolution);
-
         if (countCollisions(iterationBestSolution, collisions) < countCollisions(globalBestSolution, collisions)) {
             globalBestSolution = iterationBestSolution;
         }
 
-        tau = tau + globalBestSolution;
+        tau = tau + rho * globalBestSolution;
 
-        // cout << "feromony:";
-        // displayMatrix(tau);
-
-        iterationNr++;
     }
-
-    cout << "feromony:";
-    displayMatrix(tau);
-
-    cout << "Worker Best Solution; " << "collisions: " << countCollisions(globalBestSolution, collisions) << endl;
-    displayMatrix(globalBestSolution);
 
     pvm_initsend(PvmDataDefault); // tworzenie buffora
     packMatrix(modE, modT, globalBestSolution);
     packMatrix(modE, modT, tau);
 
-//    int mytid = pvm_mytid();
-//    pvm_pkint(&mytid, 1, 1);
     pvm_send(pvm_parent(), 2); // wyslanie messega
 
 	pvm_exit();
