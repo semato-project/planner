@@ -1,7 +1,7 @@
 # Rho factor:
 0.3
 # Number of iterations:
-1000000
+10000
 # Time of single slave iteration [s]
 10
 # Ant quantity:

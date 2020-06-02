@@ -75,13 +75,13 @@ int countT(float *propabilisticsEvent, int modT) {
 
     float random = 1.0;
     while (random >= 1.0 || random >= 1) {
-        random = (rand() / RAND_MAX);
+        random = ( (float) rand() / RAND_MAX);
     }
 
     float border = 0;
     for (int i = 0; i < modT; i++) {
         border += propabilisticsEvent[i];
-        if (random < border || random == border) {
+        if (random <= border) {
             return i;
         }
     }

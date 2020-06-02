@@ -106,20 +106,20 @@ float countPe(int e, Matrix &tau, float *Pe, int modT) {
 
 }
 
-int countT(float *propabilisticsEvent, int modT) {
-
-    double random = ((double) rand() / RAND_MAX);
-    double border = 0;
-    for (int i = 0; i < modT; i++) {
-        border += propabilisticsEvent[i];
-        if (random <= border) {
-//            cout << random << " return: " << i << endl;
-            return i;
-        }
-    }
-
-    throw 9;
-}
+//int countT(float *propabilisticsEvent, int modT) {
+//
+//    double random = ((double) rand() / RAND_MAX);
+//    double border = 0;
+//    for (int i = 0; i < modT; i++) {
+//        border += propabilisticsEvent[i];
+//        if (random <= border) {
+////            cout << random << " return: " << i << endl;
+//            return i;
+//        }
+//    }
+//
+//    throw 9;
+//}
 
 
 int countCollisions(Matrix &partialSolution, Matrix &collisions) {
