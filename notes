@@ -4,7 +4,7 @@ g++ -o planner_worker matrix.cpp planner_worker.cpp -lpvm3
 
 cd $PVM_PATH && g++ -o planner_worker matrix.cpp planner_worker.cpp -lpvm3 && g++ -o a matrix.cpp planner_manager.cpp -lpvm3
 
-
+docker stack deploy --compose-file docker-compose.yaml vossibility
 
 [8:t400bd] Master Best Solution (Total): (2 collisions) 
 [8:t400bd] 0 0 1 0 0 0 0 0 0
@@ -54,3 +54,32 @@ cd $PVM_PATH && g++ -o planner_worker matrix.cpp planner_worker.cpp -lpvm3 && g+
 [8:t400bd] 
 [8:t400bd] Total Duration: 101
 [8:t400bd] After iterations: 101
+
+
+
+
+
+
+docker stack deploy --compose-file docker-compose.yaml planner
+
+
+
+docker swarm init --advertise-addr 127.0.0.1 --default-addr-pool 10.1.0.0/16
+docker swarm leave --force
+
+g++ -o planner_manager matrix.cpp planner_manager.cpp -lpvm3
+g++ -o planner_worker matrix.cpp planner_worker.cpp -lpvm3
+
+g++ -o planner_manager matrix.cpp planner_manager.cpp -lpvm3 && g++ -o planner_worker matrix.cpp planner_worker.cpp -lpvm3
+
+spawn -> planner_manager
+
+
+
+
+
+
+
+
+
+

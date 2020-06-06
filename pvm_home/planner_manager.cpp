@@ -133,7 +133,7 @@ void packMatrix(int cols, int rows, Matrix &matrix) {
     }
 }
 
-void initializeConstants(ifstream &inputDataFile, double &rho, int &numberOfIterations, int &singleSlaveIterationSeconds, int &antQuantity, int &modE, int &modT) {
+void initializeConstants(ifstream &inputDataFile, double &rho, double &tauMin, int &numberOfIterations, int &singleSlaveIterationSeconds, int &antQuantity, int &modE, int &modT) {
 
     string line;
     getline(inputDataFile, line);
@@ -141,6 +141,12 @@ void initializeConstants(ifstream &inputDataFile, double &rho, int &numberOfIter
     rho = stod(line);
 
     cout << "rho: " << rho << endl;
+
+    getline(inputDataFile, line);
+    getline(inputDataFile, line);
+    tauMin = stod(line);
+
+    cout << "tauMin: " << tauMin << endl;
 
     getline(inputDataFile, line);
     getline(inputDataFile, line);
@@ -210,7 +216,7 @@ void initializeCollisions(ifstream &inputDataFile, Matrix &collisions, int modE)
 
 int main() {
     float tauMax;
-    double rho;
+    double rho, tauMin;
     int numberOfIterations, antQuantity, modE, modT, singleSlaveIterationSeconds;
 
     time_t start = time(nullptr);
@@ -227,7 +233,7 @@ int main() {
         throw "input.txt file can not be read.";
     }
 
-    initializeConstants(inputDataFile, rho, numberOfIterations, singleSlaveIterationSeconds, antQuantity, modE, modT);
+    initializeConstants(inputDataFile, rho, tauMin, numberOfIterations, singleSlaveIterationSeconds, antQuantity, modE, modT);
 
     tauMax = (double)1 / rho;
 
@@ -247,7 +253,7 @@ int main() {
 
     bool optimalSolutionFound = false;
 
-    int iterationPerformed = 1;
+    int iterationPerformed = 0;
 
     for (int ii = 0; ii < numberOfIterations; ii++) {
 
@@ -262,6 +268,7 @@ int main() {
             pvm_pkint(&modT, 1, 1); // wsadzenie inta do buffora
             pvm_pkint(&antQuantity, 1, 1);
             pvm_pkdouble(&rho, 1, 1);
+            pvm_pkdouble(&tauMin, 1, 1);
             pvm_pkint(&singleSlaveIterationSeconds, 1, 1);
             packMatrix(modE, modE, collisions);
             packMatrix(modE, modT, tau);
@@ -272,9 +279,10 @@ int main() {
             pvm_recv(-1, 2);
             Matrix result(modE, modT);
             unpackMatrix(modE, modT, result);
-            unpackMatrix(modE, modT, tau);
+
 
             if (countCollisions(result, collisions) < countCollisions(masterBestSolution, collisions)) {
+                unpackMatrix(modE, modT, tau);
                 masterBestSolution = result;
             }
 

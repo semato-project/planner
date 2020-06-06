@@ -1,22 +1,22 @@
-Kroki:
-
-1: zainstaluj docker i docker-compose
-
-2: Zbuduj obraz - w katalogu projektu:
-
-docker build . -t pvm_img_1 -f Dockerfile
-
-3: Odpal obrazy - w tym samym katalogu
-
-docker-compose up
-
-4: Wejdź do kontenerów od 1 do 5 w 5 różnych oknach rerminala:
-
-docker exec -it -u1000 planner_pvm{ tu cyfra od 1 do 5}_1 bash
-
-
 Przydatne komendy:
 
-gcc master.c -o master -lpvm3
+Budowanie obrazu:
+docker build . -t pvm_img_1 -f Dockerfile
 
-gcc slave.c -o slave -lpvm3
+Inicjalizacja docker swarm mode:
+docker swarm init --advertise-addr 127.0.0.1 --default-addr-pool 10.1.0.0/16
+docker swarm leave --force
+docker stack deploy --compose-file docker-compose.yaml planner
+
+Wejście do kontenera:
+docker exec -it -u1000 {nazwa_kontenera_} bash
+
+Kompilacja:
+cd $PVM_PATH
+g++ -o planner_manager matrix.cpp planner_manager.cpp -lpvm3
+g++ -o planner_worker matrix.cpp planner_worker.cpp -lpvm3
+
+g++ -o planner_manager matrix.cpp planner_manager.cpp -lpvm3 && g++ -o planner_worker matrix.cpp planner_worker.cpp -lpvm3
+
+Uruchomienie
+spawn -> planner_manager

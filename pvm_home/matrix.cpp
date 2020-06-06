@@ -547,6 +547,17 @@ void Matrix::fillMatrix(double value)
     }
 }
 
+void Matrix::assureMinimalValue(double value)
+{
+    for (int i = 0; i < this->rows_; ++i) {
+        for (int j = 0; j < this->cols_; ++j) {
+            if (p[i][j] < value) {
+                this->p[i][j] = value;
+            }
+        }
+    }
+}
+
 int Matrix::getRows()
 {
    return this->rows_;

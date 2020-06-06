@@ -1,9 +1,11 @@
 # Rho factor:
-0.0015
+0.3
+# Tau min
+0.0078
 # Number of iterations:
-10
+4
 # Time of single slave iteration [s]
-5
+2
 # Ant quantity:
 10
 # Event quantity:

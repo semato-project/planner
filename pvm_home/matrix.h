@@ -45,6 +45,7 @@ public:
     void readSolutionsFromRREF(std::ostream& os);
     Matrix inverse();
     void fillMatrix(double value);
+    void assureMinimalValue(double value);
     int getRows();
     int getCols();
 

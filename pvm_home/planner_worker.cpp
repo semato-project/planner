@@ -86,7 +86,7 @@ int main(){
     srand(time(NULL));
 
     int modE, modT, antQuantity, singleSlaveIterationSeconds;
-    double rho;
+    double rho, tauMin;
     int i = pvm_recv( -1, 1);
     if ( i < 0 )
     {
@@ -97,6 +97,7 @@ int main(){
     pvm_upkint( &modT, 1, 1);
     pvm_upkint( &antQuantity, 1, 1);
     pvm_upkdouble( &rho, 1, 1);
+    pvm_upkdouble( &tauMin, 1, 1);
     pvm_upkint(&singleSlaveIterationSeconds, 1, 1);
     Matrix collisions(modE, modE);
     unpackMatrix(modE, modE, collisions);
@@ -146,6 +147,7 @@ int main(){
         }
 
         tau = (1 - rho) * tau + antQuantity * globalBestSolution;
+        tau.assureMinimalValue(tauMin);
 
     }
 

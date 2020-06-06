@@ -2,9 +2,11 @@ version: "3"
 services:
   pvm1:
     deploy:
+      mode: replicated
+      replicas: 1
       resources:
-        limit:
-          cpus: 0.5
+        limits:
+          cpus: '0.5'
     image: pvm_img_1:latest
     volumes:
       - ./data:/home/pvm/data
@@ -12,9 +14,11 @@ services:
 
   pvm2:
     deploy:
+      mode: replicated
+      replicas: 1
       resources:
-        limit:
-          cpus: 0.5
+        limits:
+          cpus: '0.5'
     image: pvm_img_1:latest
     volumes:
     - ./data:/home/pvm/data
@@ -22,9 +26,11 @@ services:
 
   pvm3:
     deploy:
+      mode: replicated
+      replicas: 1
       resources:
-        limit:
-          cpus: 0.5
+        limits:
+          cpus: '0.5'
     image: pvm_img_1:latest
     volumes:
       - ./data:/home/pvm/data
@@ -32,9 +38,11 @@ services:
 
   pvm4:
     deploy:
+      mode: replicated
+      replicas: 1
       resources:
-        limit:
-          cpus: 0.5
+        limits:
+          cpus: '0.5'
     image: pvm_img_1:latest
     volumes:
       - ./data:/home/pvm/data
@@ -44,7 +52,7 @@ services:
 #    deploy:
 #      resources:
 #        limit:
-#          cpus: 0.5
+#          cpus: '0.5'
 #    image: pvm_img_1:latest
 #    volumes:
 #      - ./data:/home/pvm/data
